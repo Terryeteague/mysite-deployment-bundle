@@ -1,5 +1,5 @@
 # ============================================================
-# docker-compose.yml — MySite Container Orchestration
+# docker-compose.yml — Machine Design AI Container Orchestration
 # ============================================================
 # Usage:
 #   Development:  docker compose --profile dev up
@@ -7,8 +7,9 @@
 #   Full stack:   docker compose --profile prod --profile tools up -d
 # ============================================================
 
-name: mysite
+name: mdai
 
+# ── Shared defaults
 x-logging: &default-logging
   driver: "json-file"
   options:
@@ -18,15 +19,17 @@ x-logging: &default-logging
 x-restart: &always-restart
   restart: always
 
+# ── Services
 services:
 
+  # ── Dev server (hot-reload via bind mount)
   web-dev:
     profiles: [dev]
     build:
       context: .
       target: builder
-    image: mysite:dev
-    container_name: mysite-dev
+    image: mdai:dev
+    container_name: mdai-dev
     volumes:
       - .:/app:ro
     working_dir: /app
@@ -42,6 +45,7 @@ services:
       timeout: 3s
       retries: 3
 
+  # ── Production Nginx container
   web:
     profiles: [prod]
     build:
@@ -49,11 +53,13 @@ services:
       target: runtime
       args:
         - BUILDKIT_INLINE_CACHE=1
-    image: mysite:latest
-    container_name: mysite-prod
+    image: mdai:latest
+    container_name: mdai-prod
     <<: *always-restart
     ports:
       - "80:80"
+    environment:
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx/conf.d
     env_file:
       - .env
     logging: *default-logging
@@ -72,19 +78,22 @@ services:
           cpus: "0.10"
           memory: 32M
 
+  # ── Traefik reverse proxy + auto-SSL (production)
   traefik:
     profiles: [prod]
     image: traefik:v3.0
-    container_name: mysite-traefik
+    container_name: mdai-traefik
     <<: *always-restart
     command:
+      - "--api.insecure=false"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.le.acme.tlschallenge=true"
-      - "--certificatesresolvers.le.acme.email=${ACME_EMAIL:-hello@mysite.com}"
+      - "--certificatesresolvers.le.acme.email=${ACME_EMAIL:-hello@machinedesignai.com}"
       - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+      - "--log.level=WARN"
     ports:
       - "80:80"
       - "443:443"
@@ -92,19 +101,28 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - letsencrypt:/letsencrypt
     logging: *default-logging
+    labels:
+      - "traefik.enable=false"
 
+  # ── Watchtower: auto-update containers (optional)
   watchtower:
     profiles: [tools]
     image: containrrr/watchtower:latest
-    container_name: mysite-watchtower
+    container_name: mdai-watchtower
     <<: *always-restart
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_SCHEDULE=0 0 3 * * *
+      - WATCHTOWER_NOTIFICATIONS=email
+      - WATCHTOWER_NOTIFICATION_EMAIL_FROM=${SMTP_USER}
+      - WATCHTOWER_NOTIFICATION_EMAIL_TO=${SMTP_USER}
+      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER=${SMTP_HOST}
+      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT=${SMTP_PORT:-587}
     logging: *default-logging
 
+# ── Volumes
 volumes:
   letsencrypt:
     driver: local
