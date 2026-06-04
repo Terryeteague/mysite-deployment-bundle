@@ -1,12 +1,15 @@
 # ============================================================
-# robots.txt — MySite
+# robots.txt — Machine Design AI
 # ============================================================
 # Tells search engine crawlers which pages to index.
+# Full spec: https://www.robotstxt.org/robotstxt.html
+# Test at:   https://search.google.com/search-console/robots-tester
 # ============================================================
 
 User-agent: *
 Allow: /
 
+# Block admin, API, and config paths from all crawlers
 Disallow: /admin/
 Disallow: /api/
 Disallow: /config/
@@ -14,22 +17,30 @@ Disallow: /.env
 Disallow: /.git/
 Disallow: /private/
 Disallow: /tmp/
+
+# Block common development artifacts
 Disallow: /node_modules/
 Disallow: /*.map$
 
+# -- Search Engine Specific
+
+# Google
 User-agent: Googlebot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
 
+# Bing
 User-agent: Bingbot
 Allow: /
 Crawl-delay: 10
 
+# Yandex
 User-agent: Yandex
 Allow: /
 Crawl-delay: 10
 
+# -- Block Bad Bots
 User-agent: AhrefsBot
 Disallow: /
 
@@ -42,4 +53,5 @@ Disallow: /
 User-agent: SemrushBot
 Crawl-delay: 10
 
-Sitemap: https://mysite.com/sitemap.xml
+# -- Sitemap
+Sitemap: https://machinedesignai.com/sitemap.xml
