@@ -1,0 +1,110 @@
+# ============================================================
+# docker-compose.yml — MySite Container Orchestration
+# ============================================================
+# Usage:
+#   Development:  docker compose --profile dev up
+#   Production:   docker compose --profile prod up -d
+#   Full stack:   docker compose --profile prod --profile tools up -d
+# ============================================================
+
+name: mysite
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-restart: &always-restart
+  restart: always
+
+services:
+
+  web-dev:
+    profiles: [dev]
+    build:
+      context: .
+      target: builder
+    image: mysite:dev
+    container_name: mysite-dev
+    volumes:
+      - .:/app:ro
+    working_dir: /app
+    command: npx serve -l 8080 .
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  web:
+    profiles: [prod]
+    build:
+      context: .
+      target: runtime
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    image: mysite:latest
+    container_name: mysite-prod
+    <<: *always-restart
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 128M
+        reservations:
+          cpus: "0.10"
+          memory: 32M
+
+  traefik:
+    profiles: [prod]
+    image: traefik:v3.0
+    container_name: mysite-traefik
+    <<: *always-restart
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.le.acme.tlschallenge=true"
+      - "--certificatesresolvers.le.acme.email=${ACME_EMAIL:-hello@mysite.com}"
+      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    logging: *default-logging
+
+  watchtower:
+    profiles: [tools]
+    image: containrrr/watchtower:latest
+    container_name: mysite-watchtower
+    <<: *always-restart
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_SCHEDULE=0 0 3 * * *
+    logging: *default-logging
+
+volumes:
+  letsencrypt:
+    driver: local
