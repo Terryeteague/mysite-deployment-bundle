@@ -1,6 +1,6 @@
-# 🔐 Security Policy — MySite
+# 🔐 Security Policy — Machine Design AI
 
-Thank you for helping keep MySite and its users safe. This document explains our supported versions, how to report a vulnerability responsibly, and what you can expect after reporting.
+Thank you for helping keep Machine Design AI and its users safe. This document explains our supported versions, how to report a vulnerability responsibly, and what you can expect after reporting.
 
 ---
 
@@ -10,9 +10,9 @@ Security fixes are applied to the **latest release only**. Older versions do not
 
 | Version | Supported |
 |---|---|
-| `main` (latest) | Actively maintained |
-| Any tagged release < 1 month old | Patch if critical |
-| Older releases | No longer supported |
+| `main` (latest) | ✅ Actively maintained |
+| Any tagged release < 1 month old | ✅ Patch if critical |
+| Older releases | ❌ No longer supported |
 
 ---
 
@@ -28,7 +28,7 @@ Security fixes are applied to the **latest release only**. Older versions do not
 
 ### Alternative: Email
 
-Send a detailed report to **security@mysite.com** with:
+Send a detailed report to **security@machinedesignai.com** with:
 - A clear description of the vulnerability
 - Steps to reproduce (a minimal proof-of-concept is ideal)
 - The potential impact (what an attacker could achieve)
@@ -38,7 +38,7 @@ Send a detailed report to **security@mysite.com** with:
 
 ---
 
-## Response Timeline
+## ⏱️ Response Timeline
 
 | Milestone | Target |
 |---|---|
@@ -51,7 +51,7 @@ We follow **responsible disclosure** — we ask that you give us the agreed reme
 
 ---
 
-## Recognition
+## 🏆 Recognition
 
 We genuinely appreciate responsible disclosure. Reporters who follow this policy will be:
 
@@ -63,7 +63,7 @@ We do not currently offer a formal bug bounty program, but we will acknowledge s
 
 ---
 
-## Scope
+## 🔍 Scope
 
 **In scope — we want to hear about these:**
 - Authentication or authorisation bypass
@@ -86,11 +86,11 @@ We do not currently offer a formal bug bounty program, but we will acknowledge s
 - Self-XSS (requires the victim to run their own malicious code)
 - Clickjacking on pages with no sensitive actions
 - Theoretical vulnerabilities with no realistic exploit path
-- Issues in third-party services we don't control
+- Issues in third-party services we don't control (hosting providers, CDNs, etc.)
 
 ---
 
-## Our Security Commitments
+## 🔒 Our Security Commitments
 
 As maintainers, we commit to:
 
@@ -98,18 +98,18 @@ As maintainers, we commit to:
 - Running `npm audit` on every CI build and fixing criticals before merging
 - Never storing secrets in source code or `git` history
 - Enforcing HTTPS, HSTS, and a strict CSP in all server configs
-- Reviewing all PRs that touch security-sensitive files
+- Reviewing all PRs that touch security-sensitive files (`nginx.conf`, `.htaccess`, `Dockerfile`, `deploy.yml`)
 - Rotating any exposed credentials within 24 hours of discovery
 
 ---
 
-## Hall of Thanks
+## 🛡️ Hall of Thanks
 
 *No vulnerabilities have been reported yet. Yours could be the first!*
 
 ---
 
-## Legal
+## 📄 Legal
 
 Reporters acting in good faith under this policy will not face legal action from us. We will not initiate or support any legal proceedings against researchers who:
 
@@ -120,4 +120,4 @@ Reporters acting in good faith under this policy will not face legal action from
 
 ---
 
-*Last updated: June 4, 2026 · MySite Security Team · security@mysite.com*
+*Last updated: June 4, 2026 · Machine Design AI Security Team · security@machinedesignai.com*
