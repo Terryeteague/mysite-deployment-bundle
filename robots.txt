@@ -1,0 +1,45 @@
+# ============================================================
+# robots.txt — MySite
+# ============================================================
+# Tells search engine crawlers which pages to index.
+# ============================================================
+
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /api/
+Disallow: /config/
+Disallow: /.env
+Disallow: /.git/
+Disallow: /private/
+Disallow: /tmp/
+Disallow: /node_modules/
+Disallow: /*.map$
+
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 10
+
+User-agent: Yandex
+Allow: /
+Crawl-delay: 10
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+Sitemap: https://mysite.com/sitemap.xml
