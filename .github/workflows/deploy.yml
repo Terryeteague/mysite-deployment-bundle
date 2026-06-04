@@ -1,11 +1,11 @@
 # ============================================================
-# deploy.yml - GitHub Actions CI/CD Pipeline
-# MySite Deployment Bundle
+# deploy.yml — GitHub Actions CI/CD Pipeline
+# Machine Design AI Assistant
 # ============================================================
 # Triggers:
-#   Push to main  -> build + deploy to Production
-#   Push to dev   -> build + deploy to Staging
-#   Pull Request  -> lint + validate only (no deploy)
+#   • Push to `main`  → build + deploy to Production
+#   • Push to `dev`   → build + deploy to Staging
+#   • Pull Request    → lint + validate only (no deploy)
 #
 # Required GitHub Secrets:
 #   SSH_HOST          Production server IP or hostname
@@ -16,7 +16,7 @@
 #   SLACK_WEBHOOK     (Optional) Slack incoming webhook URL
 # ============================================================
 
-name: CI / CD - MySite
+name: CI / CD — Machine Design AI
 
 on:
   push:
@@ -24,18 +24,22 @@ on:
   pull_request:
     branches: [main, dev]
 
+# Cancel any in-progress run for the same branch
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Global env
 env:
-  IMAGE_NAME: mysite
+  IMAGE_NAME: mdai
   REGISTRY:   ghcr.io/${{ github.repository_owner }}
 
+# ── Jobs ────────────────────────────────────────────────────
 jobs:
 
+  # ── 1. Lint & Validate ─────────────────────────────────
   lint:
-    name: Lint & Validate
+    name: 🔍 Lint & Validate
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -46,19 +50,20 @@ jobs:
       - name: Validate HTML structure
         run: |
           echo "Checking for required HTML elements..."
-          grep -q '<html lang=' index.html         || (echo "Missing lang attribute on html" && exit 1)
+          grep -q '<html lang=' index.html         || (echo "Missing lang attribute on <html>" && exit 1)
           grep -q '<meta name="description"'  index.html || (echo "Missing meta description"  && exit 1)
+          grep -q '<link rel="canonical"'     index.html || echo "No canonical link found (non-blocking)"
           grep -q 'skip-link'                 index.html || (echo "Missing skip-link"          && exit 1)
           echo "HTML validation passed"
 
-      - name: Check for debug leftovers
+      - name: Check for TODO / debug leftovers
         run: |
           echo "Scanning for debug artifacts..."
-          ! grep -rn "TODO\|FIXME\|console\.log\|debugger" \
+          ! grep -rn "TODO\|FIXME\|console\.log\|debugger\|alert(" \
             --include="*.html" --include="*.css" --include="*.js" . \
             | grep -v node_modules \
             | grep -v ".github" \
-            || (echo "Debug artifacts found" && exit 1)
+            || (echo "Debug artifacts found — review before shipping" && exit 1)
           echo "No debug artifacts found"
 
       - name: Verify config files present
@@ -72,13 +77,14 @@ jobs:
       - name: Check .env is not committed
         run: |
           if git ls-files --error-unmatch .env 2>/dev/null; then
-            echo ".env file is tracked by git - remove it immediately!"
+            echo ".env file is tracked by git — remove it immediately!"
             exit 1
           fi
           echo ".env is not committed"
 
+  # ── 2. Build Docker Image ───────────────────────────────
   build:
-    name: Build & Push Image
+    name: 🐳 Build & Push Image
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: lint
@@ -128,15 +134,23 @@ jobs:
           cache-to:   type=gha,mode=max
           platforms: linux/amd64,linux/arm64
 
+      - name: Image build summary
+        run: |
+          echo "### Docker Image Built" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tags:** ${{ steps.meta.outputs.tags }}"      >> $GITHUB_STEP_SUMMARY
+          echo "- **Digest:** ${{ steps.push.outputs.digest }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Pushed to:** ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
+
+  # ── 3a. Deploy → Staging (dev branch) ──────────────────────
   deploy-staging:
-    name: Deploy to Staging
+    name: 🟡 Deploy to Staging
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: build
     if: github.ref == 'refs/heads/dev'
     environment:
       name: staging
-      url: https://staging.mysite.com
+      url: https://staging.machinedesignai.com
 
     steps:
       - name: Deploy to staging server via SSH
@@ -148,31 +162,36 @@ jobs:
           port:        ${{ secrets.SSH_PORT || 22 }}
           script: |
             set -euo pipefail
-            cd /var/www/mysite-staging
+            echo "Deploying mdai:dev to staging..."
+            cd /var/www/mdai-staging
+            echo "${{ secrets.GITHUB_TOKEN }}" | \
+              docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev
             docker compose --profile prod pull
             docker compose --profile prod up -d --no-deps --force-recreate web
             docker image prune -f
+            echo "Staging deploy complete"
 
       - name: Smoke test staging
         run: |
           sleep 10
-          STATUS=$(curl -o /dev/null -s -w "%{http_code}" https://staging.mysite.com)
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" https://staging.machinedesignai.com)
           if [ "$STATUS" != "200" ]; then
-            echo "Staging smoke test failed - HTTP $STATUS"
+            echo "Staging smoke test failed — HTTP $STATUS"
             exit 1
           fi
           echo "Staging is healthy (HTTP $STATUS)"
 
+  # ── 3b. Deploy → Production (main branch) ──────────────────
   deploy-production:
-    name: Deploy to Production
+    name: 🚀 Deploy to Production
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: build
     if: github.ref == 'refs/heads/main'
     environment:
       name: production
-      url: https://mysite.com
+      url: https://machinedesignai.com
 
     steps:
       - name: Deploy to production server via SSH
@@ -184,41 +203,54 @@ jobs:
           port:     ${{ secrets.SSH_PORT || 22 }}
           script: |
             set -euo pipefail
-            cd /var/www/mysite
+            echo "Deploying mdai:latest to production..."
+            cd /var/www/mdai
+            echo "${{ secrets.GITHUB_TOKEN }}" | \
+              docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             docker compose --profile prod pull
             docker compose --profile prod up -d --no-deps --force-recreate web
             docker image prune -f
+            echo "Production deploy complete"
 
       - name: Production smoke test
         run: |
           sleep 15
-          STATUS=$(curl -o /dev/null -s -w "%{http_code}" https://mysite.com)
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" https://machinedesignai.com)
           if [ "$STATUS" != "200" ]; then
-            echo "Production smoke test failed - HTTP $STATUS"
+            echo "Production smoke test failed — HTTP $STATUS"
             exit 1
           fi
           echo "Production is healthy (HTTP $STATUS)"
 
+      - name: Write deployment summary
+        run: |
+          echo "### Production Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** \`${{ github.ref_name }}\`"       >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`${{ github.sha }}\`"            >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployed by:** @${{ github.actor }}"        >> $GITHUB_STEP_SUMMARY
+          echo "- **Time:** $(date -u '+%Y-%m-%d %H:%M UTC')"  >> $GITHUB_STEP_SUMMARY
+          echo "- **URL:** [machinedesignai.com](https://machinedesignai.com)" >> $GITHUB_STEP_SUMMARY
+
       - name: Notify Slack on success
-        if: success()
+        if: success() && secrets.SLACK_WEBHOOK != ''
         uses: slackapi/slack-github-action@v1.26.0
         with:
           payload: |
             {
-              "text": "MySite deployed to production by @${{ github.actor }}"
+              "text": "Machine Design AI deployed to production by @${{ github.actor }} — <https://machinedesignai.com|View site>"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: Notify Slack on failure
-        if: failure()
+        if: failure() && secrets.SLACK_WEBHOOK != ''
         uses: slackapi/slack-github-action@v1.26.0
         with:
           payload: |
             {
-              "text": "MySite production deploy FAILED"
+              "text": "Machine Design AI production deploy FAILED — <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
