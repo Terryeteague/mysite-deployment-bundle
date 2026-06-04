@@ -3,37 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Page not found — MySite" />
+  <meta name="description" content="Page not found — Machine Design AI" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>404 — Page Not Found | MySite</title>
+  <title>404 — Page Not Found | Machine Design AI</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <style>
-    :root { --bg: #0f172a; --card: #1e293b; --border: #334155; --primary: #6366f1; --accent: #06b6d4; --text: #f1f5f9; --muted: #94a3b8; --radius: 1rem; }
+    :root {
+      --bg:       #0f172a;
+      --card:     #1e293b;
+      --border:   #334155;
+      --primary:  #6366f1;
+      --accent:   #06b6d4;
+      --text:     #f1f5f9;
+      --muted:    #94a3b8;
+      --radius:   1rem;
+    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: grid; place-items: center; padding: 2rem; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 3rem 2.5rem; max-width: 520px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.5); animation: rise .5s ease both; }
-    @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
-    .code { font-size: 6rem; font-weight: 800; line-height: 1; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; }
-    .icon { font-size: 3rem; margin-bottom: 1rem; display: block; animation: wobble 2.5s ease-in-out infinite; }
-    @keyframes wobble { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 3rem 2.5rem;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      animation: rise .5s ease both;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .code {
+      font-size: 6rem;
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      user-select: none;
+    }
+    .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+      animation: wobble 2.5s ease-in-out infinite;
+    }
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-5deg); }
+      50%       { transform: rotate( 5deg); }
+    }
     h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
     p { color: var(--muted); line-height: 1.75; margin-bottom: 2rem; font-size: 0.95rem; }
     .actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
-    .btn { display: inline-flex; align-items: center; padding: 0.65rem 1.4rem; border-radius: 0.6rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: transform .2s; }
-    .btn--primary { background: var(--primary); color: #fff; }
-    .btn--ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-    .btn:hover { transform: translateY(-2px); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.65rem 1.4rem; border-radius: 0.6rem;
+      font-size: 0.9rem; font-weight: 600; text-decoration: none;
+      transition: transform .2s, box-shadow .2s; cursor: pointer;
+      border: none; font-family: inherit;
+    }
+    .btn--primary { background: var(--primary); color: #fff; box-shadow: 0 0 20px rgba(99,102,241,.3); }
+    .btn--primary:hover { background: #4f46e5; transform: translateY(-2px); }
+    .btn--outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn--outline:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0 1.5rem; }
+    .suggestions { text-align: left; }
+    .suggestions-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 0.75rem; }
+    .suggestions ul { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+    .suggestions a { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--primary); text-decoration: none; padding: 0.3rem 0; transition: color .2s; }
+    .suggestions a:hover { color: #4f46e5; }
+    .suggestions a::before { content: '→'; }
+    .brand { margin-top: 2rem; font-size: 0.8rem; color: var(--muted); }
+    .brand a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; } }
   </style>
 </head>
 <body>
-  <div class="card">
-    <span class="icon" aria-hidden="true">🔍</span>
-    <div class="code" aria-label="404">404</div>
-    <h1>Page Not Found</h1>
-    <p>The page you're looking for doesn't exist or has been moved. Let's get you back on track.</p>
-    <div class="actions">
-      <a href="/" class="btn btn--primary">← Go Home</a>
-      <button onclick="history.back()" class="btn btn--ghost">Go Back</button>
+  <main>
+    <div class="card" role="main">
+      <span class="icon" aria-hidden="true">🔭</span>
+      <p class="code" aria-label="Error 404">404</p>
+      <h1>Page Not Found</h1>
+      <p>The page you're looking for doesn't exist, was moved, or the URL might be mistyped. Let's get you back on track.</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="/">← Go Home</a>
+        <button class="btn btn--outline" onclick="history.back()">Go Back</button>
+      </div>
+      <hr class="divider" />
+      <div class="suggestions">
+        <p class="suggestions-title">Popular pages</p>
+        <ul>
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </div>
+      <p class="brand"><a href="/">Machine Design AI</a> &mdash; Back to safety</p>
     </div>
-  </div>
+  </main>
 </body>
 </html>
