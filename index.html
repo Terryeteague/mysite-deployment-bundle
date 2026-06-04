@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A production-ready website deployment bundle." />
+  <meta name="theme-color" content="#0f172a" />
+  <title>My Website</title>
+  <link rel="preload" href="css/main.css" as="style" />
+  <link rel="preload" href="js/app.js" as="script" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="site-header" role="banner">
+    <nav class="nav container" aria-label="Primary navigation">
+      <a class="nav__logo" href="/" aria-label="Home"><span class="nav__logo-text">MySite</span></a>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu"><span class="hamburger"></span></button>
+      <ul class="nav__menu" id="nav-menu" role="list">
+        <li><a class="nav__link" href="#features">Features</a></li>
+        <li><a class="nav__link" href="#about">About</a></li>
+        <li><a class="nav__link" href="#contact">Contact</a></li>
+        <li><a class="nav__link nav__link--cta" href="#get-started">Get Started</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <span class="badge">🚀 Now Live</span>
+          <h1 class="hero__title" id="hero-heading">Build Something <span class="text-gradient">Remarkable</span></h1>
+          <p class="hero__subtitle">A fast, accessible, and production-ready web experience.</p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#get-started">Get Started</a>
+            <a class="btn btn--outline" href="#features">Learn More</a>
+          </div>
+        </div>
+        <div class="hero__visual" aria-hidden="true">
+          <div class="hero__card"><div class="hero__card-icon">⚡</div><p class="hero__card-label">Deploy Ready</p></div>
+        </div>
+      </div>
+    </section>
+    <section class="features section" id="features" aria-labelledby="features-heading">
+      <div class="container">
+        <h2 class="section__title" id="features-heading">Everything You Need</h2>
+        <p class="section__subtitle">Built with best practices baked in from the start.</p>
+        <div class="features__grid">
+          <article class="feature-card"><div class="feature-card__icon" aria-hidden="true">🔒</div><h3 class="feature-card__title">Security First</h3><p class="feature-card__desc">HTTPS enforced, CSP headers, and sanitized inputs.</p></article>
+          <article class="feature-card"><div class="feature-card__icon" aria-hidden="true">⚡</div><h3 class="feature-card__title">Blazing Fast</h3><p class="feature-card__desc">Optimized assets and minimal render-blocking resources.</p></article>
+          <article class="feature-card"><div class="feature-card__icon" aria-hidden="true">♿</div><h3 class="feature-card__title">Accessible</h3><p class="feature-card__desc">WCAG 2.1 AA compliant and screen-reader friendly.</p></article>
+          <article class="feature-card"><div class="feature-card__icon" aria-hidden="true">📱</div><h3 class="feature-card__title">Responsive</h3><p class="feature-card__desc">Fluid layouts that look great on every device.</p></article>
+          <article class="feature-card"><div class="feature-card__icon" aria-hidden="true">🌐</div><h3 class="feature-card__title">SEO Ready</h3><p class="feature-card__desc">Semantic HTML, meta tags, and Open Graph included.</p></article>
+          <article class="feature-card"><div class="feature-card__icon" aria-hidden="true">🛠️</div><h3 class="feature-card__title">Easy to Maintain</h3><p class="feature-card__desc">Clean, commented code with a consistent structure.</p></article>
+        </div>
+      </div>
+    </section>
+    <section class="contact section" id="contact" aria-labelledby="contact-heading">
+      <div class="container">
+        <h2 class="section__title" id="contact-heading">Get in Touch</h2>
+        <form class="contact__form" id="contact-form" novalidate>
+          <div class="form-group"><label for="name" class="form-label">Full Name *</label><input type="text" id="name" name="name" class="form-input" required /><span class="form-error" role="alert" aria-live="polite"></span></div>
+          <div class="form-group"><label for="email" class="form-label">Email *</label><input type="email" id="email" name="email" class="form-input" required /><span class="form-error" role="alert" aria-live="polite"></span></div>
+          <div class="form-group"><label for="message" class="form-label">Message *</label><textarea id="message" name="message" class="form-input form-textarea" required></textarea><span class="form-error" role="alert" aria-live="polite"></span></div>
+          <button type="submit" class="btn btn--primary btn--full">Send Message</button>
+          <p class="form-success" id="form-success" role="status" aria-live="polite" hidden>✅ Message sent!</p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer__inner">
+      <p class="footer__copy">&copy; <span id="footer-year"></span> MySite. All rights reserved.</p>
+      <nav aria-label="Footer navigation"><ul class="footer__links" role="list"><li><a href="/privacy.html">Privacy</a></li><li><a href="/terms.html">Terms</a></li></ul></nav>
+    </div>
+  </footer>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
