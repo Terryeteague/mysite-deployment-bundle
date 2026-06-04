@@ -1,46 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  sitemap.xml — Machine Design AI
+  Submit to Google Search Console and Bing Webmaster Tools.
+  Full spec: https://www.sitemaps.org/protocol.html
+-->
 <urlset
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
 >
 
+  <!-- Home -->
   <url>
-    <loc>https://mysite.com/</loc>
+    <loc>https://machinedesignai.com/</loc>
     <lastmod>2026-06-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
+  <!-- Features -->
   <url>
-    <loc>https://mysite.com/#features</loc>
+    <loc>https://machinedesignai.com/#features</loc>
     <lastmod>2026-06-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
+  <!-- About -->
   <url>
-    <loc>https://mysite.com/#about</loc>
+    <loc>https://machinedesignai.com/#about</loc>
     <lastmod>2026-06-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
+  <!-- Contact -->
   <url>
-    <loc>https://mysite.com/#contact</loc>
+    <loc>https://machinedesignai.com/#contact</loc>
     <lastmod>2026-06-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
 
+  <!-- Legal -->
   <url>
-    <loc>https://mysite.com/privacy.html</loc>
+    <loc>https://machinedesignai.com/privacy.html</loc>
     <lastmod>2026-06-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
-    <loc>https://mysite.com/terms.html</loc>
+    <loc>https://machinedesignai.com/terms.html</loc>
     <lastmod>2026-06-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
